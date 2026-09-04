@@ -86,12 +86,21 @@ export class ChaosRoom {
     return new Promise((resolve, reject) => {
       if (this.connections[peerId] || peerId === this.myId) { resolve(); return; }
       const conn = this.peer.connect(peerId, { reliable: true });
+      
+      const timeout = setTimeout(() => {
+        reject(new Error('Connection timed out'));
+      }, 10000); // 10s timeout
+
       conn.on('open', () => {
+        clearTimeout(timeout);
         this._register(conn);
         this._send(conn, { type: 'HELLO', payload: { id: this.myId, alias: this.alias } });
         resolve();
       });
-      conn.on('error', reject);
+      conn.on('error', (err) => {
+        clearTimeout(timeout);
+        reject(err);
+      });
     });
   }
 
