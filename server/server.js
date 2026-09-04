@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { createRoom, getRoom, addUserToRoom, removeUser, addFileToRoom, getRoomUsers } from './store.js';
+import { createRoom, getRoom, addUserToRoom, removeUser, addFileToRoom, getRoomUsers, users } from './store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
