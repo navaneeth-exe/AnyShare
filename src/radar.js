@@ -27,13 +27,16 @@ export function initRadar(canvas, getPeers, getSelf, onPeerClick) {
 
   function resize() {
     const container = canvas.parentElement;
-    const size = Math.min(container.clientWidth, container.clientHeight) - 24;
+    if (!container) return;
+    const rawSize = Math.min(container.clientWidth, container.clientHeight);
+    if (rawSize <= 24) return; // Hidden or unrendered (e.g. mobile tab switched or screen hidden)
+    const size = rawSize - 24;
     canvas.width = size;
     canvas.height = size;
   }
 
   function getCenter() { return { x: canvas.width / 2, y: canvas.height / 2 }; }
-  function getRadius() { return canvas.width / 2 - 12; }
+  function getRadius() { return Math.max(0, canvas.width / 2 - 12); }
 
   function assignPosition(id) {
     if (peerPositions[id]) return;
@@ -49,6 +52,10 @@ export function initRadar(canvas, getPeers, getSelf, onPeerClick) {
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
     const R = getRadius();
+    if (W <= 0 || H <= 0 || R <= 0) {
+      animFrame = requestAnimationFrame(drawFrame);
+      return;
+    }
     ctx.clearRect(0, 0, W, H);
 
     // Background circle

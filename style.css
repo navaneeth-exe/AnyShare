@@ -68,9 +68,15 @@ body {
   position: absolute; inset: 0; display: flex;
   opacity: 0; pointer-events: none;
   transform: translateY(6px);
-  transition: opacity 350ms ease, transform 350ms ease;
+  transition: opacity 250ms ease, transform 250ms ease;
 }
-.screen.active { opacity: 1; pointer-events: all; transform: none; }
+.screen:not(.active) {
+  display: none !important;
+}
+.screen.active {
+  display: flex !important;
+  opacity: 1; pointer-events: all; transform: none;
+}
 
 /* ── Surface ── */
 .surface {
@@ -662,30 +668,29 @@ body {
 @media (max-width: 768px) {
   html, body {
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   #app {
     height: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-y: auto;
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
   }
 
   .screen {
-    position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-y: auto;
+    position: absolute;
+    inset: 0;
     transform: none;
   }
 
   /* Lobby responsive */
   #screen-lobby {
-    padding: 16px 12px;
-    align-items: flex-start;
+    padding: 24px 16px;
+    align-items: center;
     justify-content: flex-start;
-    min-height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .lobby-content {
@@ -716,10 +721,10 @@ body {
 
   /* Room Screen Mobile Structure */
   #screen-room {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
-    height: 100dvh;
-    min-height: 100dvh;
     overflow: hidden;
   }
 
@@ -810,15 +815,18 @@ body {
   /* Active column based on mobile view selection */
   .room-body[data-active-view="work"] .col-work,
   .room-body:not([data-active-view]) .col-work {
-    display: flex;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .room-body[data-active-view="radar"] .col-radar {
-    display: flex;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .room-body[data-active-view="peers"] .col-peers {
-    display: flex;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   /* Column internal adjustments */
