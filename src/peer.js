@@ -26,7 +26,32 @@ export class ChaosRoom {
     return new Promise((resolve, reject) => {
       const opts = {
         debug: 0,
-        config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun.relay.metered.ca:80' },
+            {
+              urls: 'turn:global.relay.metered.ca:80',
+              username: 'e8dd65b92f6de4da0936a798',
+              credential: '4+LoHiYTfMBiMq/0',
+            },
+            {
+              urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+              username: 'e8dd65b92f6de4da0936a798',
+              credential: '4+LoHiYTfMBiMq/0',
+            },
+            {
+              urls: 'turn:global.relay.metered.ca:443',
+              username: 'e8dd65b92f6de4da0936a798',
+              credential: '4+LoHiYTfMBiMq/0',
+            },
+            {
+              urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+              username: 'e8dd65b92f6de4da0936a798',
+              credential: '4+LoHiYTfMBiMq/0',
+            },
+          ]
+        }
       };
       this.peer = customId ? new Peer(customId, opts) : new Peer(opts);
       this.peer.on('open', id => { this.myId = id; resolve(id); });

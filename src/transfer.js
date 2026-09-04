@@ -92,8 +92,16 @@ export class TransferEngine {
     const blob = new Blob(parts, { type: b.meta.type || 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = b.meta.name; a.click();
-    URL.revokeObjectURL(url);
+    a.href = url;
+    a.download = b.meta.name || 'download';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    // Delay cleanup so the browser has time to initiate the download
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
     if (this.transfers[transferId]) {
       this.transfers[transferId].status = 'done';
       this.transfers[transferId].progress = 100;
