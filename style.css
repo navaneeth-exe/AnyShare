@@ -1,5 +1,5 @@
 /* ================================================
-   ChaosDrop — v2 Design System
+   AnyDrop — v2 Design System
    ================================================
    Direction: Terminal / Air-traffic control room.
    Dark interior, phosphor-green primary, monospaced
@@ -642,3 +642,229 @@ body {
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+
+/* ═════════════════════════════════════════
+   RESPONSIVE DESIGN & MOBILE OPTIMIZATION
+═════════════════════════════════════════ */
+
+.mobile-nav-bar {
+  display: none;
+}
+
+/* Tablets / Medium screens (< 1024px) */
+@media (max-width: 1024px) {
+  .room-body {
+    grid-template-columns: 240px 1fr 200px;
+  }
+}
+
+/* Mobile Devices & Small Tablets (< 768px) */
+@media (max-width: 768px) {
+  html, body {
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  #app {
+    height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .screen {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-y: auto;
+    transform: none;
+  }
+
+  /* Lobby responsive */
+  #screen-lobby {
+    padding: 16px 12px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-height: 100dvh;
+  }
+
+  .lobby-content {
+    padding: 12px 4px;
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  .lobby-card {
+    padding: 16px;
+  }
+
+  .tab-btn {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .proof-strip {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .proof-item {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Room Screen Mobile Structure */
+  #screen-room {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .hud {
+    padding: 0 12px;
+    height: 46px;
+  }
+
+  .hud-stat {
+    display: none; /* Hide on tight screens, already shown in pill/nav */
+  }
+
+  .hud-wordmark {
+    font-size: 13px;
+  }
+
+  .btn-hud-action {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  /* Mobile Switcher Nav Bar */
+  .mobile-nav-bar {
+    display: flex;
+    align-items: center;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 4px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--t2);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--t-fast);
+  }
+
+  .mobile-nav-btn svg {
+    flex-shrink: 0;
+  }
+
+  .mobile-nav-btn:hover {
+    color: var(--t1);
+  }
+
+  .mobile-nav-btn.active {
+    color: var(--p);
+    border-bottom-color: var(--p);
+    background: rgba(60,255,160,0.04);
+  }
+
+  /* Convert 3 columns into switched views */
+  .room-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    background: var(--ground);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .col-radar,
+  .col-work,
+  .col-peers {
+    display: none;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Active column based on mobile view selection */
+  .room-body[data-active-view="work"] .col-work,
+  .room-body:not([data-active-view]) .col-work {
+    display: flex;
+  }
+
+  .room-body[data-active-view="radar"] .col-radar {
+    display: flex;
+  }
+
+  .room-body[data-active-view="peers"] .col-peers {
+    display: flex;
+  }
+
+  /* Column internal adjustments */
+  .col-radar {
+    justify-content: space-between;
+  }
+
+  .radar-wrap {
+    min-height: 260px;
+    flex: 1;
+  }
+
+  .qr-strip {
+    padding: 14px;
+    background: var(--surface-1);
+  }
+
+  .drop-zone {
+    margin: 10px;
+    padding: 18px 12px;
+  }
+
+  .clipboard-section, .chat-section {
+    flex-shrink: 0;
+  }
+
+  .chat-messages {
+    min-height: 180px;
+    max-height: 280px;
+  }
+
+  /* Modal on mobile */
+  .modal-box {
+    width: 90%;
+    max-width: 320px;
+    padding: 20px 16px;
+  }
+
+  /* Toasts on mobile */
+  .toast-stack {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .toast {
+    max-width: 100%;
+  }
+}

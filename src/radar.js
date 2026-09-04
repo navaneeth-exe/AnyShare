@@ -159,12 +159,13 @@ export function initRadar(canvas, getPeers, getSelf, onPeerClick) {
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Emoji initial
-      ctx.font = '13px sans-serif';
+      // Peer monogram / initial
+      const initial = (peer.alias || 'P').trim().slice(0, 1).toUpperCase();
+      ctx.font = 'bold 11px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = '#fff';
-      ctx.fillText(peer.emoji || '👤', pos.x, pos.y - 1);
+      ctx.fillText(initial, pos.x, pos.y);
 
       // Alias label
       ctx.font = 'bold 9px "JetBrains Mono"';

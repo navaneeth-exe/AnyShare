@@ -1,4 +1,4 @@
-# ChaosDrop - P2P Ephemeral File Drop & Shared Clipboard
+# AnyDrop - P2P Ephemeral File Drop & Shared Clipboard
 
 A sleek, serverless, zero-cost peer-to-peer file transfer and shared clipboard application engineered with WebRTC, PeerJS, and modern vanilla web standards.
 
@@ -8,30 +8,31 @@ A sleek, serverless, zero-cost peer-to-peer file transfer and shared clipboard a
 
 ---
 
-## ⚡ Features
+## Features
 
 - **Direct P2P File Streaming**: Zero intermediate cloud storage. Transfers go directly peer-to-peer using chunked ArrayBuffers over WebRTC data channels.
+- **Persistent Server Rooms**: Multi-user rooms with server-backed file storage, live user tracking, and shared chat.
 - **Shared Clipboard**: Instant, reactive sync for code snippets, commands, and text across connected peers.
 - **Ephemeral Room Mesh**: Automatic mesh discovery with room codes and direct invite links.
 - **Radar Proximity Map**: Dynamic visual topology of connected devices in the local mesh.
 - **Impeccable Terminal Aesthetic**: High-contrast, hardware-accelerated dark ATC/terminal interface with live telemetry (transfer speed, ETA, connection state).
-- **Zero Infrastructure Cost**: Powered completely in-browser with free public STUN signaling.
+- **Zero Infrastructure Cost for P2P**: Powered completely in-browser with free public STUN signaling.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: Vanilla JavaScript (ES Modules), HTML5, CSS3 Custom Properties
 - **P2P Protocol**: [PeerJS](https://peerjs.com/) (WebRTC DataChannel mesh)
-- **Icons**: Lucide Icons
+- **Backend / Rooms**: Node.js, Express, Socket.IO, Multer
 - **Bundler / Dev Server**: [Vite](https://vitejs.dev/)
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v16 or newer recommended)
+- [Node.js](https://nodejs.org/) (v18 or newer recommended)
 - [npm](https://www.npmjs.com/)
 
 ### Installation & Run

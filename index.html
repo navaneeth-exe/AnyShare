@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="ChaosDrop — Instant P2P file transfer and shared clipboard. Works on any device, no installs required." />
+    <meta name="description" content="AnyDrop — Instant P2P file transfer and shared clipboard. Works on any device, no installs required." />
     <meta name="theme-color" content="#0c0d10" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-    <title>ChaosDrop — P2P File Drop</title>
+    <title>AnyDrop — P2P & Cross-Network File Drop</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
@@ -29,34 +29,50 @@
               </div>
               <span class="logo-dot"></span>
             </div>
-            <h1 class="logo-wordmark">Chaos<span>Drop</span></h1>
+            <h1 class="logo-wordmark">Any<span>Drop</span></h1>
             <p class="logo-sub">Cross-platform file transfer and shared clipboard.<br>No cloud, no installs, no accounts.</p>
           </div>
 
           <div class="lobby-card">
             <div class="tab-bar">
-              <button class="tab-btn active" data-tab="create" id="tab-create">New Room</button>
-              <button class="tab-btn" data-tab="join" id="tab-join">Join Room</button>
+              <button class="tab-btn active" data-tab="p2p" id="tab-p2p">Connect with a Person (P2P)</button>
+              <button class="tab-btn" data-tab="server" id="tab-server">Create / Join Room (Server)</button>
             </div>
 
-            <div class="tab-content active" id="tab-create-content">
+            <div class="tab-content active" id="tab-p2p-content">
               <div>
                 <div class="field-label" style="margin-bottom:6px">Your name</div>
-                <input type="text" id="alias-create" class="input" placeholder="e.g. Alex" maxlength="20" autocomplete="off" />
+                <input type="text" id="alias-p2p" class="input" placeholder="e.g. Alex" maxlength="20" autocomplete="off" />
               </div>
-              <button class="btn-primary" id="btn-create-room">Create Room</button>
+              <div style="margin-top: 16px;">
+                <button class="btn-primary" id="btn-create-p2p">Create P2P Mesh</button>
+              </div>
+              <div style="margin: 24px 0; border-top: 1px dashed var(--border); position: relative;">
+                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--surface); padding: 0 10px; font-size: 12px; color: var(--text-mut);">OR</span>
+              </div>
+              <div>
+                <div class="field-label" style="margin-bottom:6px">Join existing P2P mesh</div>
+                <input type="text" id="room-code-p2p" class="input mono-input" placeholder="AD-XXXX" maxlength="12" autocomplete="off" />
+              </div>
+              <button class="btn-primary" style="margin-top: 16px;" id="btn-join-p2p">Join P2P Mesh</button>
             </div>
 
-            <div class="tab-content" id="tab-join-content">
+            <div class="tab-content" id="tab-server-content">
               <div>
                 <div class="field-label" style="margin-bottom:6px">Your name</div>
-                <input type="text" id="alias-join" class="input" placeholder="e.g. Alex" maxlength="20" autocomplete="off" />
+                <input type="text" id="alias-server" class="input" placeholder="e.g. Alex" maxlength="20" autocomplete="off" />
+              </div>
+              <div style="margin-top: 16px;">
+                <button class="btn-primary" id="btn-create-server">Create Server Room</button>
+              </div>
+              <div style="margin: 24px 0; border-top: 1px dashed var(--border); position: relative;">
+                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--surface); padding: 0 10px; font-size: 12px; color: var(--text-mut);">OR</span>
               </div>
               <div>
-                <div class="field-label" style="margin-bottom:6px">Room code</div>
-                <input type="text" id="room-code-input" class="input mono-input" placeholder="CD-XXXX" maxlength="12" autocomplete="off" />
+                <div class="field-label" style="margin-bottom:6px">Join existing Server Room</div>
+                <input type="text" id="room-code-server" class="input mono-input" placeholder="AD-XXXX" maxlength="12" autocomplete="off" />
               </div>
-              <button class="btn-primary" id="btn-join-room">Join Room</button>
+              <button class="btn-primary" style="margin-top: 16px;" id="btn-join-server">Join Server Room</button>
             </div>
           </div>
 
@@ -83,7 +99,7 @@
             </div>
             <span class="hud-stat" id="hud-peer-count"><span>0</span> connected</span>
           </div>
-          <div class="hud-wordmark">Chaos<em>Drop</em></div>
+          <div class="hud-wordmark">Any<em>Drop</em></div>
           <div class="hud-right">
             <button class="btn-hud-action" id="btn-roulette">Random peer</button>
             <button class="btn-hud-icon" id="btn-boss-key" title="Boss key (Esc)" aria-label="Toggle boss key overlay">
@@ -94,6 +110,22 @@
             </button>
           </div>
         </header>
+
+        <!-- Mobile Navigation Switcher (visible <= 768px) -->
+        <nav class="mobile-nav-bar" id="mobile-nav-bar" aria-label="Room views">
+          <button class="mobile-nav-btn active" data-view="work">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Transfer & Chat</span>
+          </button>
+          <button class="mobile-nav-btn" data-view="radar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2 7.4-7.4 2 2-7.4z"/></svg>
+            <span>Radar & QR</span>
+          </button>
+          <button class="mobile-nav-btn" data-view="peers">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Peers (<span id="mobile-peer-badge">0</span>)</span>
+          </button>
+        </nav>
 
         <!-- Three-column body -->
         <div class="room-body">
@@ -130,13 +162,22 @@
               <button class="btn-pick" id="btn-browse">Choose files</button>
             </div>
 
-            <!-- Transfers -->
-            <div class="transfers-section">
+            <!-- Transfers (P2P Mode) -->
+            <div id="p2p-transfers-section" class="transfers-section">
               <div class="sec-header">
-                <span class="sec-title">Transfers</span>
+                <span class="sec-title">Transfers (P2P)</span>
                 <span class="sec-status" id="transfers-empty">No transfers yet</span>
               </div>
               <div id="transfer-list" class="transfer-list"></div>
+            </div>
+
+            <!-- Shared Files (Server Mode) -->
+            <div id="server-files-section" class="transfers-section" style="display: none;">
+              <div class="sec-header">
+                <span class="sec-title">Room Files (Persistent)</span>
+                <span class="sec-status" id="server-files-empty">No files in room</span>
+              </div>
+              <div id="server-file-list" class="transfer-list"></div>
             </div>
 
             <!-- Shared Clipboard -->

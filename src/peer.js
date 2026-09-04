@@ -17,7 +17,7 @@ export class ChaosRoom {
 
   static generateRoomCode() {
     const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-    let c = 'CD-';
+    let c = 'AD-';
     for (let i = 0; i < 4; i++) c += chars[Math.floor(Math.random() * chars.length)];
     return c;
   }

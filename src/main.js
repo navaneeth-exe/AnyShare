@@ -3,6 +3,7 @@
 import { ChaosRoom } from './peer.js';
 import { initRadar } from './radar.js';
 import { TransferEngine } from './transfer.js';
+import { ServerRoom } from './server-room.js';
 import QRCode from 'qrcode';
 
 let room = null;
@@ -11,6 +12,7 @@ let radar = null;
 let selectedPeerId = null;
 let myId = null;
 let roomControlsInit = false;
+let currentMode = 'p2p';
 
 // ── Colors for peer avatars ───────────────────────
 const PEER_COLORS = [
@@ -77,6 +79,8 @@ function renderPeers() {
   const empty = document.getElementById('peers-empty');
   const count = document.getElementById('peer-list-count');
   count.textContent = peers.length;
+  const mobileBadge = document.getElementById('mobile-peer-badge');
+  if (mobileBadge) mobileBadge.textContent = peers.length;
 
   if (peers.length === 0) {
     if (!empty) {
@@ -259,7 +263,16 @@ function showReceiveModal(offer) {
 function enterRoom(roomCode) {
   showScreen('screen-room');
   renderQR(roomCode);
-  transfer = new TransferEngine(room, renderTransfers);
+  
+  if (currentMode === 'p2p') {
+    document.getElementById('p2p-transfers-section').style.display = '';
+    document.getElementById('server-files-section').style.display = 'none';
+    transfer = new TransferEngine(room, renderTransfers);
+  } else {
+    document.getElementById('p2p-transfers-section').style.display = 'none';
+    document.getElementById('server-files-section').style.display = '';
+    renderServerFiles();
+  }
 
   const canvas = document.getElementById('radar-canvas');
   radar = initRadar(
@@ -272,6 +285,41 @@ function enterRoom(roomCode) {
   initClipboard();
   bindRoomControls();
   renderPeers();
+}
+
+function renderServerFiles() {
+  const list = document.getElementById('server-file-list');
+  const empty = document.getElementById('server-files-empty');
+  const files = room.files || [];
+
+  if (!files.length) {
+    empty.style.display = '';
+    list.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = files.map(f => {
+    return `<div class="transfer-row">
+      <span class="transfer-icon" style="display:flex; align-items:center; justify-content:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </span>
+      <div class="transfer-info">
+        <div class="transfer-name" title="${esc(f.name)}">${esc(f.name)}</div>
+        <div style="font-size: 11px; color: var(--text-mut);">by ${esc(f.uploadedBy)} at ${fmtTime(f.uploadedAt)}</div>
+      </div>
+      <div class="transfer-meta">
+        <span class="transfer-speed">${fmtBytes(f.size)}</span>
+        <a href="/api/rooms/${room.roomId}/files/${f.id}" download="${esc(f.name)}" class="chip chip-done" style="text-decoration:none; cursor:pointer;">Download</a>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── Event handler ──────────────────────────────────
@@ -327,6 +375,12 @@ function onRoomEvent(event, data) {
       transfer.handleDone(data.transferId);
       toast('File received — downloading', 'info');
       break;
+
+    case 'file_added':
+      if (currentMode === 'server') {
+        renderServerFiles();
+      }
+      break;
   }
 }
 
@@ -356,6 +410,19 @@ function bindRoomControls() {
   });
 
   function handleFiles(files) {
+    if (currentMode === 'server') {
+      files.forEach(f => {
+        toast(`Uploading ${f.name}...`, 'info');
+        room.sendFile(f).then(() => {
+          toast(`${f.name} uploaded`, 'info');
+        }).catch(err => {
+          toast(`Upload failed: ${err.message}`, 'error');
+        });
+      });
+      return;
+    }
+    
+    // P2P Mode
     if (!selectedPeerId) {
       if (!room || room.getPeers().length === 0) { toast('No peers in the room yet', 'info'); return; }
       toast('Select a peer first (click on the radar or the list)', 'info'); return;
@@ -402,6 +469,24 @@ function initGlobalControls() {
     bossOverlay.classList.add('hidden');
     bossOverlay.setAttribute('aria-hidden', 'true');
   });
+
+  // Mobile navigation tabs
+  const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
+  const roomBody = document.querySelector('.room-body');
+  mobileNavBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      mobileNavBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      if (roomBody) {
+        roomBody.setAttribute('data-active-view', view);
+        // If switching to radar, trigger window resize event so radar canvas calculates correct size
+        if (view === 'radar') {
+          setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+        }
+      }
+    });
+  });
 }
 
 // ── Lobby ──────────────────────────────────────────
@@ -410,8 +495,8 @@ function initLobby() {
   const params = new URLSearchParams(location.search);
   const joinCode = params.get('join');
   if (joinCode) {
-    document.getElementById('tab-join').click();
-    document.getElementById('room-code-input').value = joinCode;
+    document.getElementById('tab-p2p').click();
+    document.getElementById('room-code-p2p').value = joinCode;
   }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -423,32 +508,70 @@ function initLobby() {
     });
   });
 
-  document.getElementById('btn-create-room').addEventListener('click', async () => {
-    const alias = document.getElementById('alias-create').value.trim() || 'Anonymous';
-    const btn = document.getElementById('btn-create-room');
+  // P2P Create
+  document.getElementById('btn-create-p2p').addEventListener('click', async () => {
+    currentMode = 'p2p';
+    const alias = document.getElementById('alias-p2p').value.trim() || 'Anonymous';
+    const btn = document.getElementById('btn-create-p2p');
     btn.textContent = 'Connecting…'; btn.disabled = true;
     room = new ChaosRoom({ alias, onEvent: onRoomEvent });
     try {
       await room.createRoom(ChaosRoom.generateRoomCode());
     } catch {
       toast('Connection failed. Try again.', 'error');
-      btn.textContent = 'Create Room'; btn.disabled = false;
+      btn.textContent = 'Create P2P Mesh'; btn.disabled = false;
       room = null;
     }
   });
 
-  document.getElementById('btn-join-room').addEventListener('click', async () => {
-    const alias = document.getElementById('alias-join').value.trim() || 'Anonymous';
-    const code = document.getElementById('room-code-input').value.trim().toUpperCase();
+  // P2P Join
+  document.getElementById('btn-join-p2p').addEventListener('click', async () => {
+    currentMode = 'p2p';
+    const alias = document.getElementById('alias-p2p').value.trim() || 'Anonymous';
+    const code = document.getElementById('room-code-p2p').value.trim().toUpperCase();
     if (!code) { toast('Enter a room code', 'error'); return; }
-    const btn = document.getElementById('btn-join-room');
+    const btn = document.getElementById('btn-join-p2p');
     btn.textContent = 'Joining…'; btn.disabled = true;
     room = new ChaosRoom({ alias, onEvent: onRoomEvent });
     try {
       await room.joinRoom(code);
     } catch {
       toast(`Room "${code}" not found`, 'error');
-      btn.textContent = 'Join Room'; btn.disabled = false;
+      btn.textContent = 'Join P2P Mesh'; btn.disabled = false;
+      room.destroy(); room = null;
+    }
+  });
+
+  // Server Create
+  document.getElementById('btn-create-server').addEventListener('click', async () => {
+    currentMode = 'server';
+    const alias = document.getElementById('alias-server').value.trim() || 'Anonymous';
+    const btn = document.getElementById('btn-create-server');
+    btn.textContent = 'Connecting…'; btn.disabled = true;
+    room = new ServerRoom({ alias, onEvent: onRoomEvent });
+    try {
+      await room.createRoom();
+    } catch (err) {
+      toast('Server connection failed.', 'error');
+      btn.textContent = 'Create Server Room'; btn.disabled = false;
+      room = null;
+    }
+  });
+
+  // Server Join
+  document.getElementById('btn-join-server').addEventListener('click', async () => {
+    currentMode = 'server';
+    const alias = document.getElementById('alias-server').value.trim() || 'Anonymous';
+    const code = document.getElementById('room-code-server').value.trim().toUpperCase();
+    if (!code) { toast('Enter a room code', 'error'); return; }
+    const btn = document.getElementById('btn-join-server');
+    btn.textContent = 'Joining…'; btn.disabled = true;
+    room = new ServerRoom({ alias, onEvent: onRoomEvent });
+    try {
+      await room.joinRoom(code);
+    } catch (err) {
+      toast(`Failed to join server room "${code}"`, 'error');
+      btn.textContent = 'Join Server Room'; btn.disabled = false;
       room.destroy(); room = null;
     }
   });
