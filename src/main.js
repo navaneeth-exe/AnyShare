@@ -548,6 +548,7 @@ function initLobby() {
     const alias = document.getElementById('alias-server').value.trim() || 'Anonymous';
     const btn = document.getElementById('btn-create-server');
     btn.textContent = 'Connecting…'; btn.disabled = true;
+    if (room) { room.destroy(); room = null; }
     room = new ServerRoom({ alias, onEvent: onRoomEvent });
     try {
       await room.createRoom();
@@ -566,13 +567,14 @@ function initLobby() {
     if (!code) { toast('Enter a room code', 'error'); return; }
     const btn = document.getElementById('btn-join-server');
     btn.textContent = 'Joining…'; btn.disabled = true;
+    if (room) { room.destroy(); room = null; }
     room = new ServerRoom({ alias, onEvent: onRoomEvent });
     try {
       await room.joinRoom(code);
     } catch (err) {
       toast(`Failed to join server room "${code}"`, 'error');
       btn.textContent = 'Join Server Room'; btn.disabled = false;
-      room.destroy(); room = null;
+      if (room) { room.destroy(); room = null; }
     }
   });
 }
