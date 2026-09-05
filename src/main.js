@@ -590,7 +590,7 @@ function initLobby() {
   // P2P Join
   document.getElementById('btn-join-p2p').addEventListener('click', async () => {
     currentMode = 'p2p';
-    const alias = document.getElementById('alias-p2p').value.trim() || 'Anonymous';
+    const alias = (document.getElementById('alias-p2p-join') ? document.getElementById('alias-p2p-join').value.trim() : '') || document.getElementById('alias-p2p').value.trim() || 'Anonymous';
     const code = document.getElementById('room-code-p2p').value.trim().toUpperCase();
     if (!code) { toast('Enter a room code', 'error'); return; }
     const btn = document.getElementById('btn-join-p2p');
@@ -684,7 +684,7 @@ function initLobby() {
 
   document.getElementById('btn-join-server').addEventListener('click', async () => {
     currentMode = 'server';
-    const alias = document.getElementById('alias-server').value.trim() || 'Anonymous';
+    const alias = (document.getElementById('alias-server-join') ? document.getElementById('alias-server-join').value.trim() : '') || document.getElementById('alias-server').value.trim() || 'Anonymous';
     const code = document.getElementById('room-code-server').value.trim().toUpperCase();
     if (!code) { toast('Enter a room code', 'error'); return; }
     const btn = document.getElementById('btn-join-server');
