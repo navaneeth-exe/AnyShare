@@ -6,6 +6,7 @@ import { TransferEngine } from './transfer.js';
 import { ServerRoom } from './server-room.js';
 import QRCode from 'qrcode';
 import { Html5Qrcode } from 'html5-qrcode';
+import gsap from 'gsap';
 
 let room = null;
 let transfer = null;
