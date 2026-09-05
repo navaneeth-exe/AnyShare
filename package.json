@@ -17,6 +17,8 @@
     "concurrently": "^10.0.5",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
     "multer": "^2.3.0",
     "peerjs": "^1.5.5",
     "qrcode": "^1.5.4",

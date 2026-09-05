@@ -1,15 +1,15 @@
 /* ================================================
-   AnyDrop — v2 Design System
+   AnyDrop â€” v2 Design System
    ================================================
    Direction: Terminal / Air-traffic control room.
    Dark interior, phosphor-green primary, monospaced
    data, flat-plane depth through luminance not blur.
-   Operate mode — task clarity above expression.
+   Operate mode â€” task clarity above expression.
    ================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-/* ── Tokens ── */
+/* â”€â”€ Tokens â”€â”€ */
 :root {
   /* Ground */
   --ground:       #0c0d10;
@@ -26,7 +26,7 @@
 
   /* Semantic text */
   --t1:           #e8eaf0;   /* primary */
-  --t2:           #7a8494;   /* secondary — tinted from ground */
+  --t2:           #7a8494;   /* secondary â€” tinted from ground */
   --t3:           #404654;   /* muted */
 
   /* Status */
@@ -50,7 +50,7 @@
   --t-med:   250ms ease;
 }
 
-/* ── Reset ── */
+/* â”€â”€ Reset â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
 body {
@@ -63,7 +63,7 @@ body {
 }
 #app { height: 100vh; overflow: hidden; position: relative; }
 
-/* ── Screens ── */
+/* â”€â”€ Screens â”€â”€ */
 .screen {
   position: absolute; inset: 0; display: flex;
   opacity: 0; pointer-events: none;
@@ -78,7 +78,7 @@ body {
   opacity: 1; pointer-events: all; transform: none;
 }
 
-/* ── Surface ── */
+/* â”€â”€ Surface â”€â”€ */
 .surface {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -90,9 +90,9 @@ body {
   border-radius: var(--r-lg);
 }
 
-/* ═════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    LOBBY
-═════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 #screen-lobby {
   align-items: center;
@@ -100,7 +100,7 @@ body {
   background: var(--ground);
 }
 
-/* Noise texture via SVG data URI — not a decorative grid */
+/* Noise texture via SVG data URI â€” not a decorative grid */
 #screen-lobby::before {
   content: '';
   position: absolute; inset: 0;
@@ -253,9 +253,9 @@ body {
   box-shadow: 0 0 6px rgba(60,255,160,.5);
 }
 
-/* ═════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ROOM
-═════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 #screen-room {
   flex-direction: column;
@@ -264,7 +264,7 @@ body {
   overflow: hidden;
 }
 
-/* ── HUD bar ── */
+/* â”€â”€ HUD bar â”€â”€ */
 .hud {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 16px;
@@ -316,7 +316,7 @@ body {
 .btn-hud-icon:hover { border-color: var(--border-hi); color: var(--t2); }
 .btn-hud-icon svg { display: block; }
 
-/* ── Main layout ── */
+/* â”€â”€ Main layout â”€â”€ */
 .room-body {
   display: grid;
   grid-template-columns: 280px 1fr 240px;
@@ -326,7 +326,7 @@ body {
   background: var(--border); /* gap color via background trick */
 }
 
-/* ── Left: Radar column ── */
+/* â”€â”€ Left: Radar column â”€â”€ */
 .col-radar {
   display: flex; flex-direction: column;
   background: var(--ground);
@@ -373,7 +373,7 @@ body {
   color: var(--p); letter-spacing: .08em;
 }
 
-/* ── Center: Work column ── */
+/* â”€â”€ Center: Work column â”€â”€ */
 .col-work {
   display: flex; flex-direction: column;
   background: var(--ground);
@@ -466,6 +466,36 @@ body {
 .chip-decline { background: var(--red-dim); color: var(--red); }
 .transfer-speed { font-family: var(--mono); font-size: 10px; color: var(--t3); }
 
+/* Download button - prominent style */
+.btn-download {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 12px; border-radius: var(--r-sm);
+  background: var(--p-dim); color: var(--p);
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  border: 1px solid rgba(60,255,160,.25);
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  letter-spacing: .03em;
+}
+.btn-download:hover {
+  background: rgba(60,255,160,.2); border-color: var(--p);
+  transform: translateY(-1px);
+}
+.btn-download svg { flex-shrink: 0; }
+
+/* Leave room button */
+.btn-leave-room {
+  padding: 5px 12px;
+  background: var(--red-dim); border: 1px solid rgba(255,92,92,.3);
+  border-radius: var(--r-sm); color: var(--red);
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer; transition: background var(--t-fast), border-color var(--t-fast);
+}
+.btn-leave-room:hover {
+  background: rgba(255,92,92,.18); border-color: var(--red);
+}
+
 /* Clipboard section */
 .clipboard-section {
   flex-shrink: 0; border-top: 1px solid var(--border);
@@ -526,7 +556,7 @@ body {
 }
 .btn-send:hover { background: rgba(60,255,160,.18); }
 
-/* ── Right: Peers column ── */
+/* â”€â”€ Right: Peers column â”€â”€ */
 .col-peers {
   display: flex; flex-direction: column;
   background: var(--ground);
@@ -573,7 +603,7 @@ body {
   font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--p);
 }
 
-/* ── Modals ── */
+/* â”€â”€ Modals â”€â”€ */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 100;
   background: rgba(0,0,0,.65);
@@ -610,7 +640,7 @@ body {
 .modal-actions .btn-primary { flex: 1.4; padding: 9px; }
 .modal-actions .btn-ghost { flex: 1; }
 
-/* ── Boss key ── */
+/* â”€â”€ Boss key â”€â”€ */
 .boss-overlay {
   position: fixed; inset: 0; z-index: 9999;
   background: white; overflow-y: auto;
@@ -627,7 +657,7 @@ body {
 .boss-body h2 { font-size: 1.2rem; margin-bottom: 16px; }
 .boss-body p { margin-bottom: 14px; font-size: .97rem; }
 
-/* ── Toasts ── */
+/* â”€â”€ Toasts â”€â”€ */
 .toast-stack {
   position: fixed; bottom: 16px; right: 16px; z-index: 200;
   display: flex; flex-direction: column; gap: 6px;
@@ -649,9 +679,9 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
 
-/* ═════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    RESPONSIVE DESIGN & MOBILE OPTIMIZATION
-═════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .mobile-nav-bar {
   display: none;

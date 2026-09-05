@@ -262,6 +262,8 @@ function showReceiveModal(offer) {
 
 function enterRoom(roomCode) {
   showScreen('screen-room');
+  // Push state so browser back button returns to lobby instead of leaving the site
+  history.pushState({ screen: 'room', roomCode }, '', '?room=' + roomCode);
   renderQR(roomCode);
   
   if (currentMode === 'p2p') {
@@ -316,7 +318,9 @@ function renderServerFiles() {
       </div>
       <div class="transfer-meta">
         <span class="transfer-speed">${fmtBytes(f.size)}</span>
-        <a href="/api/rooms/${room.roomId}/files/${f.id}" download="${esc(f.name)}" class="chip chip-done" style="text-decoration:none; cursor:pointer;">Download</a>
+        <a href="/api/rooms/${room.roomId}/files/${f.id}" download="${esc(f.name)}" class="btn-download">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download</a>
       </div>
     </div>`;
   }).join('');
@@ -448,6 +452,22 @@ function bindRoomControls() {
 // ── Global controls ────────────────────────────────
 
 function initGlobalControls() {
+  // Leave Room button
+  document.getElementById('btn-leave-room').addEventListener('click', () => {
+    leaveRoom();
+    // Replace the history state so we don't get stuck
+    history.replaceState({ screen: 'lobby' }, '', location.pathname);
+  });
+
+  // Browser back button handling
+  window.addEventListener('popstate', (e) => {
+    if (document.getElementById('screen-room').classList.contains('active')) {
+      leaveRoom();
+    }
+  });
+  // Set initial history state
+  history.replaceState({ screen: 'lobby' }, '', location.pathname);
+
   document.getElementById('btn-roulette').addEventListener('click', () => {
     if (!room || room.getPeers().length === 0) { toast('No peers to select', 'info'); return; }
     const id = room.roulettePeer();
@@ -492,6 +512,12 @@ function initGlobalControls() {
 // ── Lobby ──────────────────────────────────────────
 
 function initLobby() {
+  // Store original button text so we can restore after leaving a room
+  ['btn-create-p2p', 'btn-join-p2p', 'btn-create-server', 'btn-join-server'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.dataset.originalText = btn.textContent;
+  });
+
   const params = new URLSearchParams(location.search);
   const joinCode = params.get('join');
   if (joinCode) {
