@@ -5,6 +5,7 @@ import { initRadar } from './radar.js';
 import { TransferEngine } from './transfer.js';
 import { ServerRoom } from './server-room.js';
 import QRCode from 'qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 
 let room = null;
 let transfer = null;
@@ -586,6 +587,65 @@ function initLobby() {
   });
 
   // Server Join
+    // QR Scanner logic
+  let html5QrCode;
+  let activeScanTarget = null; // 'p2p' or 'server'
+
+  const startScanner = (target) => {
+    activeScanTarget = target;
+    document.getElementById('scanner-modal').classList.remove('hidden');
+    
+    html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      (decodedText, decodedResult) => {
+        // Stop scanning
+        stopScanner();
+        
+        // Parse result
+        let roomCode = decodedText;
+        if (decodedText.includes('?join=')) {
+          roomCode = new URL(decodedText).searchParams.get('join');
+        }
+        
+        if (roomCode) {
+          toast('QR Code scanned successfully!', 'info');
+          const inputId = activeScanTarget === 'p2p' ? 'room-code-p2p' : 'room-code-server';
+          const btnId = activeScanTarget === 'p2p' ? 'btn-join-p2p' : 'btn-join-server';
+          
+          document.getElementById(inputId).value = roomCode;
+          // Trigger the join click
+          document.getElementById(btnId).click();
+        } else {
+          toast('Invalid QR code format', 'error');
+        }
+      },
+      (errorMessage) => {
+        // parse errors are frequent and normal while scanning, ignore
+      }
+    ).catch((err) => {
+      toast(`Camera error: ${err.message}`, 'error');
+      stopScanner();
+    });
+  };
+
+  const stopScanner = () => {
+    document.getElementById('scanner-modal').classList.add('hidden');
+    if (html5QrCode) {
+      html5QrCode.stop().then(() => {
+        html5QrCode.clear();
+      }).catch(err => {
+        console.error("Failed to stop scanner", err);
+      });
+      html5QrCode = null;
+    }
+  };
+
+  document.getElementById('btn-scan-p2p').addEventListener('click', () => startScanner('p2p'));
+  document.getElementById('btn-scan-server').addEventListener('click', () => startScanner('server'));
+  document.getElementById('btn-close-scanner').addEventListener('click', stopScanner);
+
   document.getElementById('btn-join-server').addEventListener('click', async () => {
     currentMode = 'server';
     const alias = document.getElementById('alias-server').value.trim() || 'Anonymous';

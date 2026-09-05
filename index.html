@@ -56,7 +56,12 @@
               </div>
               <div>
                 <div class="field-label" style="margin-bottom:6px">Join existing P2P mesh</div>
-                <input type="text" id="room-code-p2p" class="input mono-input" placeholder="AD-XXXX" maxlength="12" autocomplete="off" />
+                <div class="input-with-scan">
+                  <input type="text" id="room-code-p2p" class="input mono-input" placeholder="AD-XXXX" maxlength="12" autocomplete="off" />
+                  <button class="btn-scan" id="btn-scan-p2p" aria-label="Scan QR Code" title="Scan QR Code">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+                  </button>
+                </div>
               </div>
               <button class="btn-primary" style="margin-top: 16px;" id="btn-join-p2p">Join P2P Mesh</button>
             </div>
@@ -78,7 +83,12 @@
               </div>
               <div>
                 <div class="field-label" style="margin-bottom:6px">Join existing Server Room</div>
-                <input type="text" id="room-code-server" class="input mono-input" placeholder="AD-XXXX" maxlength="12" autocomplete="off" />
+                <div class="input-with-scan">
+                  <input type="text" id="room-code-server" class="input mono-input" placeholder="AD-XXXX" maxlength="12" autocomplete="off" />
+                  <button class="btn-scan" id="btn-scan-server" aria-label="Scan QR Code" title="Scan QR Code">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+                  </button>
+                </div>
               </div>
               <button class="btn-primary" style="margin-top: 16px;" id="btn-join-server">Join Server Room</button>
             </div>
@@ -285,6 +295,17 @@
 
       <div id="toast-container" class="toast-stack" role="status" aria-live="polite"></div>
     </div>
+
+      <!-- Scanner modal -->
+      <div id="scanner-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="scanner-heading">
+        <div class="modal-box">
+          <div class="modal-eyebrow" id="scanner-heading">Scan QR Code</div>
+          <div id="qr-reader" style="width: 100%; border-radius: var(--r-sm); overflow: hidden; margin: 10px 0; background: var(--surface-1);"></div>
+          <div class="modal-actions" style="margin-top: 10px;">
+            <button class="btn-ghost" id="btn-close-scanner" style="width: 100%;">Cancel</button>
+          </div>
+        </div>
+      </div>
 
     <script type="module" src="/src/main.js"></script>
   </body>
