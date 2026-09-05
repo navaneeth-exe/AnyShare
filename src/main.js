@@ -512,6 +512,42 @@ function initGlobalControls() {
 
 // ── Lobby ──────────────────────────────────────────
 
+function leaveRoom() {
+  // Destroy the room connection
+  if (room) {
+    room.destroy();
+    room = null;
+  }
+  // Destroy the transfer engine
+  if (transfer) {
+    transfer = null;
+  }
+  // Reset global state
+  selectedPeerId = null;
+  myId = null;
+
+  // Clear UI
+  document.getElementById('chat-messages').innerHTML = '';
+  document.getElementById('peers-container').innerHTML = '';
+  document.getElementById('transfer-list').innerHTML = '';
+  document.getElementById('clipboard-text').value = '';
+  document.getElementById('hud-peer-count').innerHTML = '<span>0</span> connected';
+
+  // Re-enable lobby buttons
+  ['btn-create-p2p', 'btn-join-p2p', 'btn-create-server', 'btn-join-server'].forEach(id => {
+    const btn = document.getElementById(id);
+    btn.disabled = false;
+  });
+  document.getElementById('btn-create-p2p').textContent = 'Create P2P Mesh';
+  document.getElementById('btn-join-p2p').textContent = 'Join P2P Mesh';
+  document.getElementById('btn-create-server').textContent = 'Create Server Room';
+  document.getElementById('btn-join-server').textContent = 'Join Server Room';
+
+  // Switch to lobby
+  showScreen('screen-lobby');
+  toast('Left the room', 'info');
+}
+
 function initLobby() {
   // Store original button text so we can restore after leaving a room
   ['btn-create-p2p', 'btn-join-p2p', 'btn-create-server', 'btn-join-server'].forEach(id => {
